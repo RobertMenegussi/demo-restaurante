@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Avaliação | Bistrô Aurora</title>
+  <meta name="description" content="Página separada de avaliação para atendimento e comida." />
+  <style>
+    :root {
+      --bg: #f5f2eb;
+      --paper: #fdfbf7;
+      --card: #ffffff;
+      --text: #1f1f1a;
+      --muted: #6a675f;
+      --line: #e7e1d5;
+      --accent: #6f775a;
+      --accent-soft: #eef0e7;
+      --accent-dark: #4f5840;
+      --max: 760px;
+      --shadow: 0 10px 30px rgba(31,31,26,0.06);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, textarea { font: inherit; }
+
+    .container {
+      width: min(calc(100% - 28px), var(--max));
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .btn, .btn-soft {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 11px 15px;
+      background: var(--paper);
+      color: var(--text);
+      font-weight: 600;
+      cursor: pointer;
+      transition: .18s ease;
+    }
+
+    .btn {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .btn:hover, .btn-soft:hover { transform: translateY(-1px); }
+
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(32px, 5vw, 50px);
+      line-height: 0.96;
+      letter-spacing: -0.04em;
+      font-weight: 700;
+      font-family: ui-serif, Georgia, serif;
+    }
+
+    .subtext {
+      margin: 16px 0 0;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 58ch;
+    }
+
+    .form {
+      display: grid;
+      gap: 22px;
+      margin-top: 28px;
+    }
+
+    .field {
+      display: grid;
+      gap: 12px;
+    }
+
+    .field label {
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .stars {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .stars input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .stars label {
+      font-size: 34px;
+      line-height: 1;
+      cursor: pointer;
+      color: #cfc8ba;
+      transition: transform .15s ease, color .15s ease;
+    }
+
+    .stars label:hover,
+    .stars label:hover ~ label,
+    .stars input:checked ~ label {
+      color: #7e8766;
+      transform: translateY(-1px);
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .textarea {
+      width: 100%;
+      min-height: 140px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 16px;
+      color: var(--text);
+      resize: vertical;
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+
+    .textarea:focus {
+      border-color: rgba(111,119,90,0.5);
+      box-shadow: 0 0 0 4px rgba(111,119,90,0.1);
+    }
+
+    .form-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .note {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+      max-width: 46ch;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%) translateY(20px);
+      background: #23231d;
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 999px;
+      font-size: 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: .2s ease;
+      z-index: 80;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.16);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 720px) {
+      .card { padding: 18px; border-radius: 22px; }
+      .stars label { font-size: 30px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <div class="top-actions">
+      <a class="btn-soft" href="index.html">← Voltar ao cardápio</a>
+      <a class="btn-soft" href="admin.html">Abrir admin</a>
+    </div>
+
+    <section class="card">
+      <div class="eyebrow">Avaliação rápida</div>
+      <h1>Como foi sua experiência?</h1>
+      <p class="subtext">Avalie separadamente o atendimento e a comida. Depois, se quiser, escreva um comentário curto sobre sua experiência.</p>
+
+      <form class="form" id="feedbackForm">
+        <div class="field">
+          <label>Atendimento</label>
+          <div class="stars" aria-label="Nota de atendimento">
+            <input type="radio" id="atendimento5" name="atendimento" value="5" required>
+            <label for="atendimento5" title="5 estrelas">★</label>
+            <input type="radio" id="atendimento4" name="atendimento" value="4">
+            <label for="atendimento4" title="4 estrelas">★</label>
+            <input type="radio" id="atendimento3" name="atendimento" value="3">
+            <label for="atendimento3" title="3 estrelas">★</label>
+            <input type="radio" id="atendimento2" name="atendimento" value="2">
+            <label for="atendimento2" title="2 estrelas">★</label>
+            <input type="radio" id="atendimento1" name="atendimento" value="1">
+            <label for="atendimento1" title="1 estrela">★</label>
+          </div>
+          <div class="hint">De 1 a 5 estrelas.</div>
+        </div>
+
+        <div class="field">
+          <label>Comida</label>
+          <div class="stars" aria-label="Nota da comida">
+            <input type="radio" id="comida5" name="comida" value="5" required>
+            <label for="comida5" title="5 estrelas">★</label>
+            <input type="radio" id="comida4" name="comida" value="4">
+            <label for="comida4" title="4 estrelas">★</label>
+            <input type="radio" id="comida3" name="comida" value="3">
+            <label for="comida3" title="3 estrelas">★</label>
+            <input type="radio" id="comida2" name="comida" value="2">
+            <label for="comida2" title="2 estrelas">★</label>
+            <input type="radio" id="comida1" name="comida" value="1">
+            <label for="comida1" title="1 estrela">★</label>
+          </div>
+          <div class="hint">De 1 a 5 estrelas.</div>
+        </div>
+
+        <div class="field">
+          <label for="comentario">Comentário</label>
+          <textarea class="textarea" id="comentario" name="comentario" placeholder="Conte rapidinho como foi sua experiência..."></textarea>
+        </div>
+
+        <div class="form-footer">
+          <p class="note">Nesta demo, a avaliação é salva localmente no navegador para aparecer na tela de admin.</p>
+          <button class="btn" type="submit">Enviar avaliação</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <div class="toast" id="toast">Avaliação enviada com sucesso.</div>
+
+  <script>
+    const KEY = 'demoCardapioAvaliacoesV2';
+    const form = document.getElementById('feedbackForm');
+    const toast = document.getElementById('toast');
+
+    function getFeedbacks() {
+      try {
+        return JSON.parse(localStorage.getItem(KEY) || '[]');
+      } catch {
+        return [];
+      }
+    }
+
+    function saveFeedbacks(data) {
+      localStorage.setItem(KEY, JSON.stringify(data));
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(form);
+      const atendimento = Number(formData.get('atendimento'));
+      const comida = Number(formData.get('comida'));
+      const comentario = String(formData.get('comentario') || '').trim();
+
+      if (!atendimento || !comida) {
+        showToast('Selecione as duas notas antes de enviar.');
+        return;
+      }
+
+      const feedbacks = getFeedbacks();
+      feedbacks.unshift({
+        id: Date.now(),
+        atendimento,
+        comida,
+        comentario,
+        createdAt: new Date().toISOString()
+      });
+      saveFeedbacks(feedbacks);
+      form.reset();
+      showToast('Avaliação enviada com sucesso.');
+    });
+  </script>
+</body>
+</html>
