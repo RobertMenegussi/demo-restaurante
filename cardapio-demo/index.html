@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bistrô Exemplo | Cardápio Digital</title>
+  <meta name="description" content="Demo de cardápio digital com visual clean, busca, favoritos, carrinho, WhatsApp e chamada de atendimento." />
+  <style>
+    :root {
+      --bg: #f5f2eb;
+      --paper: #fdfbf7;
+      --paper-2: #f7f2e8;
+      --card: #ffffff;
+      --text: #1f1f1a;
+      --muted: #6a675f;
+      --line: #e7e1d5;
+      --accent: #6f775a;
+      --accent-dark: #4f5840;
+      --accent-soft: #eef0e7;
+      --warning: #b06b2d;
+      --danger: #9d4b3f;
+      --shadow: 0 10px 30px rgba(31,31,26,0.06);
+      --max: 1100px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      padding-bottom: 110px;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+
+    .container {
+      width: min(calc(100% - 28px), var(--max));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(14px);
+      background: rgba(245, 242, 235, 0.92);
+      border-bottom: 1px solid rgba(31,31,26,0.06);
+    }
+
+    .topbar-inner {
+      min-height: 72px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      color: var(--accent-dark);
+      flex-shrink: 0;
+      font-size: 18px;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-subtitle {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 260px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn, .btn-soft, .icon-btn, .chip, .action-chip {
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      color: var(--text);
+      transition: .18s ease;
+    }
+
+    .btn, .btn-soft, .action-chip {
+      padding: 11px 15px;
+      font-weight: 600;
+    }
+
+    .btn {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .btn:hover, .btn-soft:hover, .icon-btn:hover, .chip:hover, .action-chip:hover {
+      transform: translateY(-1px);
+    }
+
+    .hero {
+      padding: 22px 0 14px;
+    }
+
+    .hero-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 26px;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(260px, .85fr);
+      gap: 18px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .hero-title {
+      margin: 0;
+      font-family: ui-serif, Georgia, serif;
+      font-size: clamp(34px, 6vw, 54px);
+      letter-spacing: -0.045em;
+      line-height: .94;
+      font-weight: 700;
+    }
+
+    .hero-text {
+      margin: 14px 0 18px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 62ch;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .meta-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #4f4a40;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .hero-side {
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .side-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 18px;
+    }
+
+    .side-card h3 {
+      margin: 0;
+      font-family: ui-serif, Georgia, serif;
+      font-size: 26px;
+      letter-spacing: -0.03em;
+    }
+
+    .side-card p {
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .mini-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .mini-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      color: #4f4a40;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .utility-section {
+      padding: 6px 0 10px;
+    }
+
+    .utility-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 14px;
+    }
+
+    .search-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+    }
+
+    .search-input {
+      width: 100%;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 14px 16px;
+      color: var(--text);
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+
+    .search-input:focus {
+      border-color: rgba(111,119,90,.45);
+      box-shadow: 0 0 0 4px rgba(111,119,90,.10);
+    }
+
+    .chip-row, .category-bar {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      scrollbar-width: none;
+    }
+
+    .chip-row::-webkit-scrollbar,
+    .category-bar::-webkit-scrollbar { display: none; }
+
+    .chip, .action-chip {
+      flex: 0 0 auto;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .chip.active, .action-chip.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .action-chip {
+      background: #fff;
+    }
+
+    .category-wrap {
+      position: sticky;
+      top: 72px;
+      z-index: 40;
+      padding: 12px 0 4px;
+      background: linear-gradient(180deg, rgba(245,242,235,.96) 72%, rgba(245,242,235,0));
+    }
+
+    .category-link {
+      flex: 0 0 auto;
+      padding: 11px 16px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      border-radius: 999px;
+      color: #4f4a40;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .18s ease;
+    }
+
+    .category-link.active {
+      background: var(--accent-soft);
+      border-color: rgba(111,119,90,.25);
+      color: var(--accent-dark);
+    }
+
+    .section {
+      padding: 10px 0 0;
+    }
+
+    .section-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: end;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-family: ui-serif, Georgia, serif;
+      font-size: clamp(28px, 4vw, 38px);
+      letter-spacing: -0.04em;
+      font-weight: 700;
+    }
+
+    .section-copy {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 66ch;
+    }
+
+    .menu-list { display: grid; }
+
+    .menu-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 16px;
+      padding: 18px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .menu-item:first-child {
+      border-top: 0;
+      padding-top: 10px;
+    }
+
+    .item-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 8px;
+    }
+
+    .title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .item-title {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      font-weight: 700;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .item-desc {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 72ch;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--paper-2);
+      color: #4f4a40;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .item-side {
+      min-width: 122px;
+      display: grid;
+      justify-items: end;
+      align-content: space-between;
+      gap: 10px;
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      font-size: 18px;
+      background: #fff;
+    }
+
+    .icon-btn.active {
+      background: #fff3f2;
+      border-color: #f1d8d4;
+      color: var(--danger);
+    }
+
+    .price {
+      font-size: 24px;
+      font-weight: 750;
+      letter-spacing: -0.03em;
+      color: #201e18;
+      white-space: nowrap;
+    }
+
+    .qty-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .qty-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      cursor: pointer;
+      font-size: 18px;
+      color: var(--text);
+    }
+
+    .qty-label {
+      min-width: 22px;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .empty-box {
+      background: var(--paper);
+      border: 1px dashed rgba(31,31,26,.15);
+      border-radius: 22px;
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.7;
+      margin: 10px 0 0;
+    }
+
+    .extras-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      padding: 6px 0 18px;
+    }
+
+    .extra-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .extra-card h3 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .extra-card p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .footer {
+      padding: 10px 0 0;
+      color: var(--muted);
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: center;
+      border-top: 1px solid rgba(31,31,26,.08);
+      padding-top: 16px;
+    }
+
+    .dock {
+      position: fixed;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%);
+      z-index: 70;
+      width: min(calc(100% - 20px), 720px);
+      background: rgba(28,28,24,.96);
+      color: #fff;
+      border-radius: 22px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.2);
+      opacity: 0;
+      pointer-events: none;
+      transform-origin: center bottom;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+
+    .dock.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .dock-info {
+      min-width: 0;
+    }
+
+    .dock-label {
+      font-size: 12px;
+      opacity: .72;
+      margin-bottom: 4px;
+    }
+
+    .dock strong {
+      display: block;
+      font-size: 16px;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dock-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .dock-btn, .dock-btn-soft {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 14px;
+      cursor: pointer;
+      font-weight: 700;
+      background: #fff;
+      color: #1f1f1a;
+    }
+
+    .dock-btn-soft {
+      background: rgba(255,255,255,.12);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.12);
+    }
+
+    .floating-stack {
+      position: fixed;
+      right: 16px;
+      bottom: 94px;
+      z-index: 65;
+      display: grid;
+      gap: 10px;
+    }
+
+    .fab {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+    }
+
+    .fab-label {
+      position: absolute;
+      right: 66px;
+      white-space: nowrap;
+      background: rgba(31,31,26,.92);
+      color: #fff;
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px);
+      transition: .18s ease;
+    }
+
+    .fab-wrap { position: relative; }
+    .fab-wrap:hover .fab-label { opacity: 1; transform: translateY(0); }
+
+    .sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.3);
+      z-index: 80;
+      opacity: 0;
+      pointer-events: none;
+      transition: .18s ease;
+    }
+
+    .sheet-backdrop.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .sheet {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%) translateY(100%);
+      width: min(calc(100% - 16px), 760px);
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-bottom: 0;
+      border-radius: 24px 24px 0 0;
+      box-shadow: 0 -14px 40px rgba(0,0,0,.12);
+      z-index: 90;
+      padding: 18px 18px 22px;
+      transition: .18s ease;
+      max-height: 82vh;
+      overflow: auto;
+    }
+
+    .sheet.show { transform: translateX(-50%) translateY(0); }
+
+    .sheet-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+      margin-bottom: 16px;
+    }
+
+    .sheet h2 {
+      margin: 0;
+      font-family: ui-serif, Georgia, serif;
+      font-size: 32px;
+      line-height: .98;
+      letter-spacing: -0.04em;
+    }
+
+    .sheet p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .close-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      cursor: pointer;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .sheet-list {
+      display: grid;
+      gap: 12px;
+      margin: 8px 0 18px;
+    }
+
+    .sheet-item {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .sheet-item h3 {
+      margin: 0;
+      font-size: 17px;
+      letter-spacing: -0.02em;
+    }
+
+    .sheet-meta {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-top: 4px;
+    }
+
+    .service-grid {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .service-btn {
+      width: 100%;
+      text-align: left;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 18px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: .18s ease;
+    }
+
+    .service-btn strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .service-btn span {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .service-btn:hover { transform: translateY(-1px); background: var(--accent-soft); }
+
+    .sheet-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 92px;
+      transform: translateX(-50%) translateY(20px);
+      background: #23231d;
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 999px;
+      font-size: 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: .2s ease;
+      z-index: 100;
+      box-shadow: 0 10px 24px rgba(0,0,0,.16);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 920px) {
+      .hero-card,
+      .extras-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      body { padding-bottom: 126px; }
+      .topbar-inner, .footer-inner, .section-header, .sheet-head { align-items: flex-start; }
+      .search-row { grid-template-columns: 1fr; }
+      .menu-item { grid-template-columns: 1fr; }
+      .item-side {
+        justify-items: start;
+        min-width: 0;
+      }
+      .top-actions { display: none; }
+      .hero-card, .utility-card, .section-card, .extra-card, .side-card { padding: 18px; border-radius: 22px; }
+      .dock {
+        width: calc(100% - 16px);
+        bottom: 8px;
+        border-radius: 18px;
+        align-items: stretch;
+      }
+      .dock-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+      .floating-stack { right: 12px; bottom: 132px; }
+      .fab { width: 52px; height: 52px; border-radius: 16px; }
+      .sheet { width: calc(100% - 8px); }
+      .brand-subtitle { max-width: 180px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <div class="brand-mark">✦</div>
+        <div>
+          <h1 class="brand-title">Bistrô Exemplo</h1>
+          <span class="brand-subtitle">Cardápio demo para apresentação comercial</span>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <a class="btn-soft" href="feedback.html">Avaliar experiência</a>
+        <button class="btn-soft" id="serviceBtnTop" type="button">Chamar atendimento</button>
+        <button class="btn" id="cartBtnTop" type="button">Ver pedido</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-card">
+        <div>
+          <div class="eyebrow">Cardápio digital • leitura rápida por QR Code</div>
+          <h2 class="hero-title"> Bonito, mais limpo e elegante.</h2>
+          <p class="hero-text">Essa versão está no mesmo clima visual do feedback e do admin: tipografia mais elegante, poucos excessos, navegação clara e funções extras que ajudam a moldar novos projetos também.</p>
+          <div class="meta-row">
+            <span class="meta-chip">Aberto agora • 11h30 às 23h</span>
+            <span class="meta-chip">Salão, retirada e WhatsApp</span>
+            <span class="meta-chip">Rua Exemplo, 128 • Centro</span>
+          </div>
+        </div>
+
+        <aside class="hero-side">
+          <div class="side-card">
+            <h3>Destaque da casa</h3>
+            <p>Risoto de cogumelos com parmesão curado, manteiga noisette e finalização com azeite trufado.</p>
+          </div>
+          <div class="side-card">
+            <h3>Extras para impressionar</h3>
+            <div class="mini-list">
+              <div class="mini-item"><span>Busca e filtros rápidos</span><strong>✓</strong></div>
+              <div class="mini-item"><span>Favoritos e pré-pedido</span><strong>✓</strong></div>
+              <div class="mini-item"><span>Chamada de atendimento</span><strong>✓</strong></div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="utility-section">
+      <div class="utility-card">
+        <div class="search-row">
+          <input id="searchInput" class="search-input" type="search" placeholder="Buscar por prato, ingrediente ou bebida" />
+          <button class="btn-soft" type="button" id="clearSearchBtn">Limpar busca</button>
+        </div>
+        <div class="chip-row" id="quickFilters"></div>
+      </div>
+    </section>
+
+    <div class="category-wrap">
+      <nav class="category-bar" id="categoryBar"></nav>
+    </div>
+
+    <section class="section" id="menuSections"></section>
+
+    <section class="extras-grid">
+      <article class="extra-card">
+        <h3>Feedback separado</h3>
+        <p>A experiência do cliente continua simples: o cardápio fica limpo, e a avaliação abre em outra página com nota para atendimento e comida.</p>
+      </article>
+      <article class="extra-card">
+        <h3>Painel admin</h3>
+        <p>As avaliações, chamados e pedidos demo podem ser mostrados em outra tela, o que ajuda muito na apresentação comercial.</p>
+      </article>
+      <article class="extra-card">
+        <h3>Pronto para evoluir</h3>
+        <p>Essa base pode virar sistema de pedidos, totem, PDV leve, painel de cozinha ou CRM simples para restaurantes.</p>
+      </article>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>Demo comercial em HTML, CSS e JavaScript puro</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <a class="action-chip" href="feedback.html">Abrir avaliação</a>
+        <a class="action-chip" href="admin.html">Abrir admin</a>
+      </div>
+    </div>
+  </footer>
+
+  <div class="floating-stack">
+    <div class="fab-wrap">
+      <button class="fab" id="serviceBtnFab" type="button" aria-label="Chamar atendimento">🛎️</button>
+      <span class="fab-label">Chamar atendimento</span>
+    </div>
+    <div class="fab-wrap">
+      <a class="fab" href="feedback.html" aria-label="Avaliar experiência">⭐</a>
+      <span class="fab-label">Avaliar experiência</span>
+    </div>
+  </div>
+
+  <div class="dock" id="cartDock">
+    <div class="dock-info">
+      <div class="dock-label">Pré-pedido demo</div>
+      <strong id="dockSummary">0 itens • R$ 0,00</strong>
+    </div>
+    <div class="dock-actions">
+      <button class="dock-btn-soft" type="button" id="clearCartBtn">Limpar</button>
+      <button class="dock-btn" type="button" id="openCartBtn">Ver pedido</button>
+    </div>
+  </div>
+
+  <div class="sheet-backdrop" id="sheetBackdrop"></div>
+
+  <section class="sheet" id="cartSheet" aria-hidden="true">
+    <div class="sheet-head">
+      <div>
+        <h2>Seu pedido demo</h2>
+        <p>Perfeito para mostrar que o cardápio pode evoluir para um fluxo de pedido pelo WhatsApp.</p>
+      </div>
+      <button class="close-btn" type="button" data-close="cartSheet">×</button>
+    </div>
+    <div class="sheet-list" id="cartList"></div>
+    <div class="sheet-actions">
+      <button class="btn-soft" type="button" id="saveOrderBtn">Salvar pedido demo</button>
+      <button class="btn" type="button" id="sendWhatsAppBtn">Enviar no WhatsApp</button>
+    </div>
+  </section>
+
+  <section class="sheet" id="serviceSheet" aria-hidden="true">
+    <div class="sheet-head">
+      <div>
+        <h2>Atendimento rápido</h2>
+        <p>Outro exemplo legal: O cliente toca no botão e o restaurante recebe a solicitação.</p>
+      </div>
+      <button class="close-btn" type="button" data-close="serviceSheet">×</button>
+    </div>
+    <div class="service-grid">
+      <button class="service-btn" data-service="Chamar garçom">
+        <strong>Chamar garçom</strong>
+        <span>Solicitação rápida para a mesa.</span>
+      </button>
+      <button class="service-btn" data-service="Pedir a conta">
+        <strong>Pedir a conta</strong>
+        <span>Fluxo simples para agilizar a saída do cliente.</span>
+      </button>
+      <button class="service-btn" data-service="Pedir água">
+        <strong>Pedir água</strong>
+        <span>Exemplo de serviço extra sem precisar chamar alguém no braço.</span>
+      </button>
+      <button class="service-btn" data-service="Informar alergia alimentar">
+        <strong>Informar alergia alimentar</strong>
+        <span>Mostra que o sistema pode ir além do cardápio e apoiar o atendimento.</span>
+      </button>
+    </div>
+  </section>
+
+  <div class="toast" id="toast">Ação concluída.</div>
+
+  <script>
+    const FAVORITES_KEY = 'demoCardapioFavoritosV1';
+    const CART_KEY = 'demoCardapioCarrinhoV1';
+    const SERVICE_KEY = 'demoCardapioSolicitacoesV1';
+    const ORDERS_KEY = 'demoCardapioPedidosV1';
+
+    const MENU_DATA = [
+      {
+        id: 'entradas',
+        title: 'Entradas',
+        subtitle: 'Começos leves, porções para dividir e opções fáceis de vender no balcão ou no salão.',
+        items: [
+          { id: 'burrata', name: 'Burrata da casa', description: 'Burrata cremosa, tomate confit, pesto de manjericão e focaccia artesanal.', price: 39, tags: ['Vegetariano', 'Serve 2'], popular: true, veg: true },
+          { id: 'croqueta', name: 'Croqueta de costela', description: 'Croquetas douradas com costela desfiada, aioli cítrico e cebola tostada.', price: 34, tags: ['5 unidades'], popular: true },
+          { id: 'tartar', name: 'Tartar de salmão', description: 'Salmão fresco, avocado, pepino, gergelim e molho ponzu suave.', price: 42, tags: ['Leve', 'Sem fritura'] }
+        ]
+      },
+      {
+        id: 'principais',
+        title: 'Principais',
+        subtitle: 'Pratos completos com apresentação bonita e leitura bem simples no celular.',
+        items: [
+          { id: 'file-roti', name: 'Filé ao molho roti', description: 'Filé-mignon grelhado, purê cremoso e legumes tostados.', price: 68, tags: ['Carne bovina'], popular: true },
+          { id: 'salmao-crosta', name: 'Salmão na crosta', description: 'Lombo de salmão com crosta de ervas, arroz negro e legumes salteados.', price: 64, tags: ['Peixe'] },
+          { id: 'frango-gnocchi', name: 'Frango cremoso com gnocchi', description: 'Peito de frango grelhado, molho amanteigado e gnocchi dourado.', price: 52, tags: ['Conforto'] }
+        ]
+      },
+      {
+        id: 'massas-risotos',
+        title: 'Massas e risotos',
+        subtitle: 'Uma seção que sempre fica bonita em cardápio digital e vende bem como destaque.',
+        items: [
+          { id: 'risoto-cogumelos', name: 'Risoto de cogumelos', description: 'Arroz arbóreo, cogumelos frescos, parmesão curado e azeite trufado.', price: 56, tags: ['Vegetariano'], veg: true, popular: true },
+          { id: 'fettuccine-camarao', name: 'Fettuccine com camarões', description: 'Massa fresca ao molho suave de bisque, camarões salteados e raspas de limão.', price: 63, tags: ['Frutos do mar'] },
+          { id: 'pappardelle-ragu', name: 'Pappardelle de ragu', description: 'Massa artesanal com ragu de carne cozido lentamente por horas.', price: 58, tags: ['Massa fresca'] }
+        ]
+      },
+      {
+        id: 'bebidas',
+        title: 'Drinks e bebidas',
+        subtitle: 'Opções para salão, retirada ou integração com pedido rápido por WhatsApp.',
+        items: [
+          { id: 'negroni', name: 'Negroni Aurora', description: 'Gin, vermute rosso, bitter e casca de laranja.', price: 29, tags: ['Coquetel clássico'], alcohol: true },
+          { id: 'moscow', name: 'Moscow Mule', description: 'Vodka, espuma de gengibre, limão tahiti e gelo.', price: 28, tags: ['Refrescante'], alcohol: true },
+          { id: 'soda-artesanal', name: 'Soda artesanal', description: 'Sabores de frutas vermelhas, limão siciliano ou maracujá.', price: 16, tags: ['Sem álcool'], nonAlcohol: true }
+        ]
+      },
+      {
+        id: 'sobremesas',
+        title: 'Sobremesas',
+        subtitle: 'Final enxuto, fácil de ler e sem exagero visual.',
+        items: [
+          { id: 'torta-basca', name: 'Torta basca', description: 'Cheesecake assado de interior cremoso com calda de frutas vermelhas.', price: 24, tags: ['Individual'] },
+          { id: 'mousse-cacau', name: 'Mousse de cacau', description: 'Mousse aerada com toque de café e raspas de chocolate meio amargo.', price: 22, tags: ['Leve'] },
+          { id: 'gelato-pistache', name: 'Gelato de pistache', description: 'Gelato artesanal servido com farofa amanteigada.', price: 26, tags: ['Gelato'] }
+        ]
+      }
+    ];
+
+    const quickFilterOptions = [
+      { key: 'todos', label: 'Todos' },
+      { key: 'popular', label: 'Mais pedidos' },
+      { key: 'veg', label: 'Vegetariano' },
+      { key: 'nonAlcohol', label: 'Sem álcool' },
+      { key: 'favorites', label: 'Favoritos' }
+    ];
+
+    const state = {
+      activeCategory: 'todos',
+      activeQuickFilter: 'todos',
+      search: '',
+      favorites: new Set(loadJSON(FAVORITES_KEY, [])),
+      cart: loadJSON(CART_KEY, {})
+    };
+
+    const searchInput = document.getElementById('searchInput');
+    const menuSections = document.getElementById('menuSections');
+    const categoryBar = document.getElementById('categoryBar');
+    const quickFilters = document.getElementById('quickFilters');
+    const toast = document.getElementById('toast');
+    const cartDock = document.getElementById('cartDock');
+    const dockSummary = document.getElementById('dockSummary');
+    const cartSheet = document.getElementById('cartSheet');
+    const serviceSheet = document.getElementById('serviceSheet');
+    const sheetBackdrop = document.getElementById('sheetBackdrop');
+    const cartList = document.getElementById('cartList');
+
+    function loadJSON(key, fallback) {
+      try {
+        return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback));
+      } catch {
+        return fallback;
+      }
+    }
+
+    function saveJSON(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    function formatMoney(value) {
+      return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value || 0));
+    }
+
+    function flattenMenu() {
+      return MENU_DATA.flatMap(section => section.items.map(item => ({ ...item, categoryId: section.id, categoryTitle: section.title })));
+    }
+
+    function matchesQuickFilter(item) {
+      if (state.activeQuickFilter === 'todos') return true;
+      if (state.activeQuickFilter === 'popular') return Boolean(item.popular);
+      if (state.activeQuickFilter === 'veg') return Boolean(item.veg);
+      if (state.activeQuickFilter === 'nonAlcohol') return Boolean(item.nonAlcohol);
+      if (state.activeQuickFilter === 'favorites') return state.favorites.has(item.id);
+      return true;
+    }
+
+    function matchesSearch(item) {
+      if (!state.search) return true;
+      const base = [item.name, item.description, ...(item.tags || []), item.categoryTitle]
+        .join(' ')
+        .toLowerCase();
+      return base.includes(state.search.toLowerCase());
+    }
+
+    function itemQty(id) {
+      return Number(state.cart[id] || 0);
+    }
+
+    function renderQuickFilters() {
+      quickFilters.innerHTML = quickFilterOptions.map(filter => `
+        <button class="chip ${state.activeQuickFilter === filter.key ? 'active' : ''}" data-quick="${filter.key}" type="button">
+          ${filter.label}
+        </button>
+      `).join('');
+
+      quickFilters.querySelectorAll('[data-quick]').forEach(button => {
+        button.addEventListener('click', () => {
+          state.activeQuickFilter = button.dataset.quick;
+          renderQuickFilters();
+          renderSections();
+        });
+      });
+    }
+
+    function renderCategories() {
+      const categories = [{ id: 'todos', title: 'Tudo' }, ...MENU_DATA.map(section => ({ id: section.id, title: section.title }))];
+      categoryBar.innerHTML = categories.map(category => `
+        <button class="category-link ${state.activeCategory === category.id ? 'active' : ''}" data-category="${category.id}" type="button">
+          ${category.title}
+        </button>
+      `).join('');
+
+      categoryBar.querySelectorAll('[data-category]').forEach(button => {
+        button.addEventListener('click', () => {
+          state.activeCategory = button.dataset.category;
+          renderCategories();
+          renderSections();
+        });
+      });
+    }
+
+    function sectionHasVisibleItems(section) {
+      return section.items.some(item => matchesQuickFilter(item) && matchesSearch(item) && (state.activeCategory === 'todos' || state.activeCategory === section.id));
+    }
+
+    function renderSections() {
+      const visibleSections = MENU_DATA.filter(section => (state.activeCategory === 'todos' || state.activeCategory === section.id) && sectionHasVisibleItems(section));
+
+      if (!visibleSections.length) {
+        menuSections.innerHTML = `
+          <div class="empty-box">
+            Nenhum item encontrado com os filtros atuais.<br>
+            Tente limpar a busca ou trocar o filtro rápido.
+          </div>
+        `;
+        return;
+      }
+
+      menuSections.innerHTML = visibleSections.map(section => {
+        const items = section.items.filter(item => matchesQuickFilter(item) && matchesSearch(item));
+        return `
+          <article class="section-card" id="${section.id}">
+            <div class="section-header">
+              <div>
+                <h2 class="section-title">${section.title}</h2>
+                <p class="section-copy">${section.subtitle}</p>
+              </div>
+            </div>
+            <div class="menu-list">
+              ${items.map(item => {
+                const qty = itemQty(item.id);
+                return `
+                  <article class="menu-item">
+                    <div>
+                      <div class="item-head">
+                        <div class="title-wrap">
+                          <h3 class="item-title">${item.name}</h3>
+                          ${item.popular ? '<span class="badge">Mais pedido</span>' : ''}
+                        </div>
+                        <button class="icon-btn ${state.favorites.has(item.id) ? 'active' : ''}" type="button" data-favorite="${item.id}" aria-label="Favoritar item">${state.favorites.has(item.id) ? '♥' : '♡'}</button>
+                      </div>
+                      <p class="item-desc">${item.description}</p>
+                      <div class="tag-row">
+                        ${(item.tags || []).map(tag => `<span class="tag">${tag}</span>`).join('')}
+                      </div>
+                    </div>
+                    <div class="item-side">
+                      <strong class="price">${formatMoney(item.price)}</strong>
+                      <div class="qty-box">
+                        <button class="qty-btn" type="button" data-remove="${item.id}" aria-label="Remover item">−</button>
+                        <span class="qty-label">${qty}</span>
+                        <button class="qty-btn" type="button" data-add="${item.id}" aria-label="Adicionar item">+</button>
+                      </div>
+                    </div>
+                  </article>
+                `;
+              }).join('')}
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      menuSections.querySelectorAll('[data-favorite]').forEach(button => {
+        button.addEventListener('click', () => toggleFavorite(button.dataset.favorite));
+      });
+
+      menuSections.querySelectorAll('[data-add]').forEach(button => {
+        button.addEventListener('click', () => changeQty(button.dataset.add, 1));
+      });
+
+      menuSections.querySelectorAll('[data-remove]').forEach(button => {
+        button.addEventListener('click', () => changeQty(button.dataset.remove, -1));
+      });
+    }
+
+    function toggleFavorite(id) {
+      if (state.favorites.has(id)) {
+        state.favorites.delete(id);
+        showToast('Item removido dos favoritos.');
+      } else {
+        state.favorites.add(id);
+        showToast('Item salvo nos favoritos.');
+      }
+      saveJSON(FAVORITES_KEY, Array.from(state.favorites));
+      renderQuickFilters();
+      renderSections();
+    }
+
+    function changeQty(id, amount) {
+      const next = Math.max(0, itemQty(id) + amount);
+      if (next === 0) {
+        delete state.cart[id];
+      } else {
+        state.cart[id] = next;
+      }
+      saveJSON(CART_KEY, state.cart);
+      renderSections();
+      renderCartDock();
+      if (amount > 0) showToast('Item adicionado ao pedido demo.');
+    }
+
+    function getCartItems() {
+      const all = flattenMenu();
+      return Object.entries(state.cart)
+        .filter(([, qty]) => Number(qty) > 0)
+        .map(([id, qty]) => {
+          const item = all.find(entry => entry.id === id);
+          return item ? { ...item, qty: Number(qty), subtotal: Number(qty) * Number(item.price) } : null;
+        })
+        .filter(Boolean);
+    }
+
+    function renderCartDock() {
+      const items = getCartItems();
+      const totalQty = items.reduce((sum, item) => sum + item.qty, 0);
+      const totalValue = items.reduce((sum, item) => sum + item.subtotal, 0);
+      dockSummary.textContent = `${totalQty} ${totalQty === 1 ? 'item' : 'itens'} • ${formatMoney(totalValue)}`;
+      cartDock.classList.toggle('show', totalQty > 0);
+      renderCartSheet();
+    }
+
+    function renderCartSheet() {
+      const items = getCartItems();
+      if (!items.length) {
+        cartList.innerHTML = '<div class="empty-box" style="margin:0;">Seu pedido demo ainda está vazio.</div>';
+        return;
+      }
+
+      cartList.innerHTML = items.map(item => `
+        <article class="sheet-item">
+          <div>
+            <h3>${item.name}</h3>
+            <div class="sheet-meta">${item.qty}x • ${formatMoney(item.price)} cada</div>
+          </div>
+          <strong>${formatMoney(item.subtotal)}</strong>
+        </article>
+      `).join('');
+    }
+
+    function openSheet(id) {
+      [cartSheet, serviceSheet].forEach(sheet => sheet.classList.remove('show'));
+      document.getElementById(id).classList.add('show');
+      sheetBackdrop.classList.add('show');
+    }
+
+    function closeSheets() {
+      [cartSheet, serviceSheet].forEach(sheet => sheet.classList.remove('show'));
+      sheetBackdrop.classList.remove('show');
+    }
+
+    function pushLog(key, payload) {
+      const current = loadJSON(key, []);
+      current.unshift({ id: Date.now(), createdAt: new Date().toISOString(), ...payload });
+      saveJSON(key, current);
+    }
+
+    function saveDemoOrder(type) {
+      const items = getCartItems();
+      if (!items.length) {
+        showToast('Adicione pelo menos um item antes.');
+        return null;
+      }
+      const total = items.reduce((sum, item) => sum + item.subtotal, 0);
+      const payload = {
+        type,
+        total,
+        items: items.map(item => ({ name: item.name, qty: item.qty, price: item.price, subtotal: item.subtotal }))
+      };
+      pushLog(ORDERS_KEY, payload);
+      return payload;
+    }
+
+    function buildWhatsAppMessage(order) {
+      const lines = [
+        'Olá! Gostaria de fazer este pedido:',
+        '',
+        ...order.items.map(item => `• ${item.qty}x ${item.name} — ${formatMoney(item.subtotal)}`),
+        '',
+        `Total: ${formatMoney(order.total)}`,
+        '',
+        'Mensagem enviada pela demo do cardápio digital.'
+      ];
+      return lines.join('\n');
+    }
+
+    document.getElementById('clearSearchBtn').addEventListener('click', () => {
+      state.search = '';
+      searchInput.value = '';
+      renderSections();
+    });
+
+    searchInput.addEventListener('input', event => {
+      state.search = event.target.value.trim();
+      renderSections();
+    });
+
+    document.getElementById('serviceBtnTop').addEventListener('click', () => openSheet('serviceSheet'));
+    document.getElementById('serviceBtnFab').addEventListener('click', () => openSheet('serviceSheet'));
+    document.getElementById('cartBtnTop').addEventListener('click', () => openSheet('cartSheet'));
+    document.getElementById('openCartBtn').addEventListener('click', () => openSheet('cartSheet'));
+    sheetBackdrop.addEventListener('click', closeSheets);
+
+    document.querySelectorAll('[data-close]').forEach(button => {
+      button.addEventListener('click', closeSheets);
+    });
+
+    document.querySelectorAll('[data-service]').forEach(button => {
+      button.addEventListener('click', () => {
+        pushLog(SERVICE_KEY, { action: button.dataset.service });
+        closeSheets();
+        showToast(`Solicitação enviada: ${button.dataset.service}.`);
+      });
+    });
+
+    document.getElementById('clearCartBtn').addEventListener('click', () => {
+      state.cart = {};
+      saveJSON(CART_KEY, state.cart);
+      renderSections();
+      renderCartDock();
+      closeSheets();
+      showToast('Pedido demo limpo.');
+    });
+
+    document.getElementById('saveOrderBtn').addEventListener('click', () => {
+      const order = saveDemoOrder('salvo');
+      if (!order) return;
+      closeSheets();
+      showToast('Pedido demo salvo para mostrar no admin.');
+    });
+
+    document.getElementById('sendWhatsAppBtn').addEventListener('click', () => {
+      const order = saveDemoOrder('whatsapp');
+      if (!order) return;
+      const message = encodeURIComponent(buildWhatsAppMessage(order));
+      window.open(`https://wa.me/5500000000000?text=${message}`, '_blank', 'noopener');
+      closeSheets();
+      showToast('Pedido enviado para a simulação de WhatsApp.');
+    });
+
+    renderQuickFilters();
+    renderCategories();
+    renderSections();
+    renderCartDock();
+  </script>
+</body>
+</html>
